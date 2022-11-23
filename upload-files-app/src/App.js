@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Avatar, Button, Card, Upload, Input, Space, Row, Col } from 'antd';
-import { CloudUploadOutlined, MailOutlined,UploadOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined, MailOutlined, DownloadOutlined } from '@ant-design/icons';
 
 
 function App() {
 
   const[image, setImage] = useState(null);
   const[resume, setResume] = useState(null);
+  const[userEmail, setUserEmail] = useState('');
+  const[loadData, setLoadData] = useState(null);  
+
 
   const handleImage = (e)=>{
     setImage(e.file.originFileObj);
@@ -16,8 +19,15 @@ function App() {
     setResume(e.file.originFileObj);
   }
 
-  return(<div className='m-5'>
+  const handleLoadProfile = ()=>{
+    console.log("Loaded");
+    setLoadData("Loaded");
+  }
+
+  return(
+  <div className=' m-5'>
   <Row>
+    <Space direction='horizental' size={50} style={{display:'flex'}} >
     <Col>
     <Card
     hoverable
@@ -31,7 +41,7 @@ function App() {
         height={300}
         width={300}
         alt="example"
-        src={image !=null? URL.createObjectURL(image):"https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"} 
+        src={image !=null? URL.createObjectURL(image):"https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__340.png"} 
       />
        </label>
       <input id='image' style={{display:'none'}} type='file' onChange={(e)=>{
@@ -42,7 +52,7 @@ function App() {
   >
    <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
     <Input placeholder=" Username" prefix={<Avatar src={image !=null? URL.createObjectURL(image):"https://joeschmoe.io/api/v1/random"} />} />
-    <Input size='large' type='email' placeholder=" Email" prefix={<MailOutlined />} />
+    <Input size='large' type='email' placeholder=" Email" prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
     <Upload.Dragger
       onChange={handleResume}
     >
@@ -68,7 +78,39 @@ function App() {
     
   </Card>
     </Col>
-    <Col></Col>
+    <Col>
+      <Card
+      hoverable
+      style={{width:300}}
+      cover={
+        <img
+        height={300}
+        width={300}
+        alt="example"
+        src={"https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__340.png"} 
+      />
+      }
+      >  
+
+       <div className='text-center'>
+      <Space direction='vertical' size='middle'>
+        <Input size='large' type='email' placeholder=" Enter Email" prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
+        {loadData != null ?
+         <>
+          <h3>Name</h3>
+          <h6>email@gmail.com</h6>
+          <Button type="primary" icon={<DownloadOutlined />} size='large'>Download Resume</Button>
+         </> : 
+          <Button type="primary" icon={<DownloadOutlined />} size='large' onClick={handleLoadProfile}>Load Profile</Button> 
+      }  
+        
+      
+      </Space>
+      </div>
+
+      </Card>
+    </Col>
+    </Space>
   </Row>
 
 

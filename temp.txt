@@ -1,0 +1,49 @@
+  const [image, setImage] = useState(null);
+  const handleShowImage = (e)=>{
+      setImage(e.target.files[0]);
+  }
+  const handleImageUpload = ()=>{
+    console.log("Uploaded");
+  }
+  return(
+    <>
+      <div className='row mt-5'>
+        <div className='col offset-2'>
+        <div className="card" style={{width: '18rem'}}>
+      <img src={image != null? URL.createObjectURL(image) :"https://i.pinimg.com/736x/7e/d3/34/7ed334c715626a8afe94472b80e9b53e.jpg"} className="card-img-top" alt="" />
+        <div className="card-body">
+          <h5 className="card-title">Upload Your Image</h5>
+          <p className="card-text">Basic concept to upload image on server.</p>
+         
+         <div className='row mr-2'>
+         <div className='text-center'>
+
+          {image ==null ? <label className="btn btn-outline-secondary" htmlFor='image'>+Upload
+          <input id='image' type='file'  style={{display:'none'}} onChange={handleShowImage}/>
+          </label>:<button className="btn btn-dark" onClick={handleImageUpload}>Upload On Server</button>
+          } 
+         </div>
+         </div>
+
+      </div>
+    </div>
+        </div>
+
+        <div className='col'>
+        <div className="card" style={{width: '18rem'}}>
+      <img src="https://i.pinimg.com/736x/7e/d3/34/7ed334c715626a8afe94472b80e9b53e.jpg" className="card-img-top" alt="" />
+        <div className="card-body">
+          <h5 className="card-title">Card title</h5>
+          <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <div className='text-center'>
+          <button className="btn btn-primary">Go somewhere</button>
+          </div>
+      </div>
+    </div>
+        </div>
+
+      </div>
+    </>);
+
+ title="Noman Aijaz"
+      description="The destination of this image will be on server"
