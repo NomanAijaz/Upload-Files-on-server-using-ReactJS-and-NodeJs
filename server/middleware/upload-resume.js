@@ -3,6 +3,7 @@ const multer = require('multer');
 const uploadStorage = multer.diskStorage({
     
     destination:(req,file, cb)=>{
+        console.log("In image middleware resume ", file);
         cb(null,'public/resume');
     },
     

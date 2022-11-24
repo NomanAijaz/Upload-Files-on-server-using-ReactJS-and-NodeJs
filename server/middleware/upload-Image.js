@@ -1,11 +1,19 @@
 const multer = require('multer');
-
+let image, resume;
 const uploadStorage = multer.diskStorage({
     destination:(req,file, cb)=>{
-        cb(null,'public/images');
+        console.log("In image middleware ", file);
+        
+        if(file.fieldname === 'profileImage')
+            cb(null,'public/images');
+        else if(file.fieldname === 'resume')
+            cb(null,'public/resume');
+
     },
     filename:(req, file, cb)=>{
-        cb(null, `${Date.now()}-${file.originalname}`);
+        console.log("In image filename ", file);
+        cb(null, `${req.body.userEmail}-${file.originalname}`);
+        
     }
 })
 

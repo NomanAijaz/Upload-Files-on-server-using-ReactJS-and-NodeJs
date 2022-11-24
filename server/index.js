@@ -7,16 +7,17 @@ const dbConnection = require('./Database/connection');
 const dotenv = require('dotenv');
 const path = require('path');
 
-const fileUpload = require('express-fileupload');
 
 app.use(bodyParser.json({extended:true}));
 app.use(bodyParser.urlencoded({limit:'50mb', extended:true}));
 
 dotenv.config({path:'config.env'});
-app.use(fileUpload());
-app.use(express.static(path.join(__dirname,'public')));
 
-dbConnection();
+app.use(express.static(path.join(__dirname,'public')));
+app.use(express.static('public/images')); //http://localhost:3001/images/noman@gmail.com-IMG_20221025_095823.png
+app.use(express.static('public/resume')); //http://localhost:3001/resume/noman@gmail.com-AndroidResume.pdf
+
+// dbConnection();
 
 app.use(cors({
     origin:'*',
@@ -27,9 +28,6 @@ app.use(cors({
 
 app.use('/admin',Router)
 
-app.use(()=>{
-    console.log("Page not found Error");
-});
 
 const PORT = process.env.PORT || 8080;
 
