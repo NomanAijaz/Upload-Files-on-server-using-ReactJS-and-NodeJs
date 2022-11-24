@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(express.static('public/images')); //http://localhost:3001/images/noman@gmail.com-IMG_20221025_095823.png
 app.use(express.static('public/resume')); //http://localhost:3001/resume/noman@gmail.com-AndroidResume.pdf
 
-// dbConnection();
+ dbConnection();
 
 app.use(cors({
     origin:'*',

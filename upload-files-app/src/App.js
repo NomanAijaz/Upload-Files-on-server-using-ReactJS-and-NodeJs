@@ -13,7 +13,8 @@ function App() {
     email:'',
   });
   
-  const[loadData, setLoadData] = useState(null);  
+  const[loadData, setLoadData] = useState(null); 
+  const[ID, setID] = useState(null);  
 
 
   const handleImage = (e)=>{
@@ -24,11 +25,15 @@ function App() {
     setResume(e.file.originFileObj);
   }
 
-  const handleEmail = (e)=>{
+  const handleUser = (e)=>{
     setUser({
       ...user,
       email: e.target.value,
     })
+  }
+
+  const handleEmail = (e)=>{
+    setID(e.target.value);
   }
 
   const handleName = (e)=>{
@@ -64,9 +69,15 @@ function App() {
 
   }  
 
-  const handleLoadProfile = ()=>{
-    console.log("Loaded");
-    setLoadData("Loaded");
+  const handleLoadProfile = async ()=>{
+        try {
+          
+          const response = await fetch(`http://localhost:3001/admin/postUserdata`,{userEmail: ID});
+          response.then(res=>res.json()).then(data=>console.log('got data: ',data)).catch(err=>console.log("Got Error in fetch data: ", err));
+
+        } catch (error) {
+          
+        }
   }
 
   return(
@@ -97,7 +108,7 @@ function App() {
   >
    <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
     <Input placeholder=" Username" onChange={handleName} prefix={<Avatar src={image !=null? URL.createObjectURL(image):"https://joeschmoe.io/api/v1/random"} />} />
-    <Input size='large' type='email' onChange={handleEmail} placeholder=" Email" prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
+    <Input size='large' type='email' onChange={handleUser} placeholder=" Email" prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
     <Upload.Dragger
       onChange={handleResume}
     >
@@ -139,7 +150,7 @@ function App() {
 
        <div className='text-center'>
       <Space direction='vertical' size='middle'>
-        <Input size='large' type='email' placeholder=" Enter Email" prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
+        <Input size='large' type='email' placeholder=" Enter Email" onChange={handleEmail} prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
         {loadData != null ?
          <>
           <h3>Name</h3>
