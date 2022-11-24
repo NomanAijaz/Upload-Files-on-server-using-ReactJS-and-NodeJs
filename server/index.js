@@ -5,13 +5,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dbConnection = require('./Database/connection');
 const dotenv = require('dotenv');
+const path = require('path');
 
-const fileUpload = require('file-upload');
+const fileUpload = require('express-fileupload');
 
 app.use(bodyParser.json({extended:true}));
 app.use(bodyParser.urlencoded({limit:'50mb', extended:true}));
 
 dotenv.config({path:'config.env'});
+app.use(fileUpload());
+app.use(express.static(path.join(__dirname,'public')));
 
 dbConnection();
 
