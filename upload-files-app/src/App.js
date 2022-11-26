@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Avatar, Button, Card, Upload, Input, Space, Row, Col } from 'antd';
-import { CloudUploadOutlined, MailOutlined, DownloadOutlined } from '@ant-design/icons';
+import { Avatar, Button, Card, Upload, Input, Space, Row, Col, message,Progress } from 'antd';
+import { CloudUploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import {BASE_URL} from './constants'
+import axios from 'axios';
 
 function App() {
 
@@ -15,13 +16,25 @@ function App() {
   
   const[loadData, setLoadData] = useState(null); 
   const[ID, setID] = useState(null);  
+  const [loadings, setLoadings] = useState([]);
 
+  const clearForm = ()=>{
+    setImage(null);
+    setResume(null);
+    setUser({
+      name:'',
+      email:'',
+    });
 
-  const handleImage = (e)=>{
+  }
+
+  const handleImage = (e)=>{ 
+
     setImage(e.file.originFileObj);
   }
 
   const handleResume = (e)=>{
+
     setResume(e.file.originFileObj);
   }
 
@@ -43,10 +56,28 @@ function App() {
     })
   }
 
+
+  const enterLoading = (index) => {
+    setLoadings((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[index] = true;
+      return newLoadings;
+    });
+    setTimeout(() => {
+      setLoadings((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[index] = false;
+        message.success(`file uploaded successfully`);
+        clearForm();
+        return newLoadings;
+      });
+    }, 3000);    
+  };
+
   const handleUploadOnServer = async ()=>{
 
     try {
-
+      enterLoading(0);
       if(resume != null && image != null && user.email !=''){
           const form = new FormData();
           form.append('userName', user.name);
@@ -54,13 +85,13 @@ function App() {
           form.append('profileImage', image);
           form.append('resume', resume);
 
-          const config = {
-            method:'POST',
-            body:form,
-          }
-          
-          const response = await fetch(`http://localhost:3001/admin/postUserdata`,config);
-          response.then(res=>res.json()).catch(err=>console.log("Got Error in fetch data: ", err));
+            
+          const response = await axios.post(`http://localhost:3001/admin/postUserdata`,form);
+          response.then(res=>{
+            console.log(res.json());
+            return res.json();
+
+          }).then(data=>console.log(data)).catch(err=>console.log("Got Error in fetch data: ", err));
 
       }
     } catch (error) {
@@ -71,20 +102,41 @@ function App() {
 
   const handleLoadProfile = async ()=>{
         try {
-          
-          const response = await fetch(`http://localhost:3001/admin/postUserdata`,{userEmail: ID});
-          response.then(res=>res.json()).then(data=>console.log('got data: ',data)).catch(err=>console.log("Got Error in fetch data: ", err));
+                  
+          const configObj = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              userEmail:ID
+            }),
+          }
+
+          await fetch(`http://localhost:3001/admin/getUserdata`,configObj).then(res=>res.json()).then(data=>setLoadData(data.data)).catch(err=>console.log("Got Error in fetch data: ", err));
 
         } catch (error) {
           
         }
   }
 
+  const handleDownLoadResume = ()=>{
+    
+          let a = document.createElement('a');
+					a.href = `http://localhost:3001/resume/${loadData['userResume']}`;
+					a.download = loadData['userResume'];
+          a.target ="_blank";
+					a.click();  
+
+  }
+
+
+
   return(
   <div className=' m-5'>
   <Row>
     <Space direction='horizental' size={50} style={{display:'flex'}} >
-    <Col>
+    <Col offset={24}>
     <Card
     hoverable
     style={{
@@ -107,10 +159,12 @@ function App() {
     }
   >
    <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-    <Input placeholder=" Username" onChange={handleName} prefix={<Avatar src={image !=null? URL.createObjectURL(image):"https://joeschmoe.io/api/v1/random"} />} />
-    <Input size='large' type='email' onChange={handleUser} placeholder=" Email" prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
+    <Input placeholder=" Username" value={user.name} onChange={handleName} prefix={<Avatar src={image !=null? URL.createObjectURL(image):"https://joeschmoe.io/api/v1/random"} />} />
+    <Input size='large' type='email' value={user.email} onChange={handleUser} placeholder=" Email" prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
     <Upload.Dragger
+
       onChange={handleResume}
+    
     >
     + Upload Resume
    </Upload.Dragger>
@@ -125,7 +179,7 @@ function App() {
         {'+ Upload Image'}
       </Upload.Dragger>
       </div>: <div className='text-center p-3'>
-    <Button type="primary" icon={<CloudUploadOutlined />} onClick={handleUploadOnServer} >
+    <Button loading={loadings[0]} type="primary" icon={<CloudUploadOutlined />} onClick={handleUploadOnServer}  >
             Upload On Server
           </Button>
     </div>
@@ -134,7 +188,7 @@ function App() {
     
   </Card>
     </Col>
-    <Col>
+    <Col offset={24}>
       <Card
       hoverable
       style={{width:300}}
@@ -143,21 +197,24 @@ function App() {
         height={300}
         width={300}
         alt="example"
-        src={"https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__340.png"} 
+        src={loadData==null?"https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__340.png":`http://localhost:3001/images/${loadData['userImage']}`} 
       />
       }
       >  
 
        <div className='text-center'>
       <Space direction='vertical' size='middle'>
-        <Input size='large' type='email' placeholder=" Enter Email" onChange={handleEmail} prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
         {loadData != null ?
          <>
-          <h3>Name</h3>
-          <h6>email@gmail.com</h6>
-          <Button type="primary" icon={<DownloadOutlined />} size='large'>Download Resume</Button>
+          <h3>{loadData['userName']}</h3>
+          <h6>{loadData['userEmail']}</h6>
+          <Button type="primary" icon={<DownloadOutlined />} onClick={handleDownLoadResume} size='large'>Download Resume</Button>
          </> : 
+         <>
+         <Input size='large' type='email' placeholder=" Enter Email" onChange={handleEmail} prefix={<Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Circle-icons-mail.svg/2048px-Circle-icons-mail.svg.png" />} />
           <Button type="primary" icon={<DownloadOutlined />} size='large' onClick={handleLoadProfile}>Load Profile</Button> 
+         </>
+         
       }  
         
       

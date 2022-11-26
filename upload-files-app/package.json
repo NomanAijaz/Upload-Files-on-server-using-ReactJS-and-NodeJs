@@ -2,6 +2,7 @@
   "name": "upload-files-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "antd": "^5.0.0",
     "antd-img-crop": "^4.5.0",

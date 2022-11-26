@@ -23,10 +23,14 @@ const postUserData = async (req, res)=>{
     }
 }
 
-const getUserData= async (req, res)=>{
+const getUserData = async (req, res)=>{
     try {
-        const [userEmail] =req.body;
-        const result = await User.findOne({userEmail:userEmail});
+        
+        console.log("GET REQUEST ",req.body);
+        const {userEmail} = req.body;
+        console.log("EMAIL: ", userEmail);
+
+        const result = await User.findOne({userEmail});
         if(result){
             res.status(202).send({success:true, msg:'find user data!', data:result});
         }else{

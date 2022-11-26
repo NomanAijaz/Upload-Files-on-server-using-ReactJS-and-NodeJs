@@ -6,11 +6,13 @@ const cors = require('cors');
 const dbConnection = require('./Database/connection');
 const dotenv = require('dotenv');
 const path = require('path');
+var morgan = require('morgan');
+
 
 
 app.use(bodyParser.json({extended:true}));
 app.use(bodyParser.urlencoded({limit:'50mb', extended:true}));
-
+app.use(morgan('dev'));
 dotenv.config({path:'config.env'});
 
 app.use(express.static(path.join(__dirname,'public')));

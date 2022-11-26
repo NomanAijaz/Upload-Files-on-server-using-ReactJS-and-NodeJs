@@ -9,7 +9,8 @@ const uploadCandidateProfileImageMiddleware = require('../middleware/upload-Imag
 
 //, uploadCandidateProfileImageMiddleware.single('profileImage'), uploadCandidateResumeMiddleware.single('resume')
 router.post('/postUserdata', uploadCandidateProfileImageMiddleware.any('profileImage'), controller.postUserData);
-router.get('/postUserdata', controller.getUserData);
+
+router.post('/getUserdata', controller.getUserData);
 
 router.get('/', ()=>{
     console.log("Home Route is working fine");
